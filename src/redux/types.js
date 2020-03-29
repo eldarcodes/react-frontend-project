@@ -1,0 +1,5 @@
+export const SET_POSTS = 'SET_POSTS'
+export const SET_AUTH = 'SET_AUTH'
+export const SET_USER_DATA = 'SET_USER_DATA'
+export const SET_USER_INFO = 'SET_USER_INFO'
+export const SET_MESSAGE = 'SET_MESSAGE'
