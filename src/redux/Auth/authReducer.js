@@ -81,29 +81,24 @@ export const register = values => dispatch => {
     })
 }
 
-export const auth = values => dispatch => {
-  profileAPI
-    .authMe(values.login, values.password)
-    .then(({data}) => {
-      dispatch(setUserData(data))
-      if (data.id !== null) {
-        dispatch(setAuth(true))
-        localStorage.setItem('authId', md5(data.id))
-      } else {
-        dispatch(setAuth(false))
-      }
-    })
-    .then(() => {
-      checkingUser(localStorage.getItem('authId'))
-    })
-}
-
 export const checkingUser = userId => dispatch => {
   profileAPI.isUserAuth(userId).then(({data}) => {
     if (data.message) {
       dispatch(setAuth(true))
       dispatch(setUserInfo(data))
       dispatch(setMessageAC(data.message))
+    }
+  })
+}
+
+export const auth = values => dispatch => {
+  profileAPI.authMe(values.login, values.password).then(({data}) => {
+    dispatch(setUserData(data))
+    if (data.id !== null) {
+      dispatch(setAuth(true))
+      localStorage.setItem('authId', md5(data.id))
+    } else {
+      dispatch(setAuth(false))
     }
   })
 }

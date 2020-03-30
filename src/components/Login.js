@@ -16,7 +16,9 @@ function Login(props) {
 
   const onSubmit = values => {
     props.auth(values)
-    // props.checkingUser(localStorage.getItem('authId'))
+    setTimeout(() => {
+      props.checkingUser(localStorage.getItem('authId'))
+    }, 30)
   }
 
   return (
