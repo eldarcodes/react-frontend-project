@@ -1,6 +1,11 @@
 import {profileAPI} from '../../api/api'
-import {SET_AUTH, SET_USER_DATA, SET_MESSAGE, SET_USER_INFO} from '../types.js'
-import md5 from 'md5'
+import {
+  SET_AUTH,
+  SET_USER_DATA,
+  SET_MESSAGE,
+  SET_USER_INFO,
+  SET_STATUS
+} from '../types.js'
 
 const initialState = {
   isAuth: false,
@@ -12,7 +17,8 @@ const initialState = {
     surname: '',
     gender: '',
     email: '',
-    date_registration: null
+    date_registration: null,
+    status: ''
   }
 }
 
@@ -38,7 +44,9 @@ export function authReducer(state = initialState, action) {
           surname: action.data.info.surname,
           gender: action.data.info.gender,
           email: action.data.info.email,
-          date_registration: action.data.info.date_registration
+          date_registration: action.data.info.date_registration,
+          avatar: action.data.info.avatar,
+          status: action.data.info.status
         }
       }
     }
@@ -46,6 +54,15 @@ export function authReducer(state = initialState, action) {
       return {
         ...state,
         message: action.message
+      }
+    }
+    case SET_STATUS: {
+      return {
+        ...state,
+        userInfo: {
+          ...state.userInfo,
+          status: action.status
+        }
       }
     }
     default:
@@ -67,6 +84,11 @@ export const setMessageAC = message => ({
   message
 })
 
+export const setStatusAC = status => ({
+  type: SET_STATUS,
+  status
+})
+
 export const register = values => dispatch => {
   profileAPI
     .registration(
@@ -74,7 +96,8 @@ export const register = values => dispatch => {
       values.surname,
       values.login,
       values.email,
-      values.password
+      values.password,
+      values.sex
     )
     .then(({data}) => {
       dispatch(setMessageAC(data.message))
@@ -92,18 +115,27 @@ export const checkingUser = userId => dispatch => {
 }
 
 export const auth = values => dispatch => {
-  profileAPI.authMe(values.login, values.password).then(({data}) => {
-    dispatch(setUserData(data))
-    if (data.id !== null) {
-      dispatch(setAuth(true))
-      localStorage.setItem('authId', md5(data.id))
-    } else {
-      dispatch(setAuth(false))
-    }
-  })
+  profileAPI
+    .authMe(values.login, values.password)
+    .then(({data}) => {
+      dispatch(setUserData(data))
+      if (data.id !== null) {
+        dispatch(setAuth(true))
+        localStorage.setItem('authId', data.id)
+      } else {
+        dispatch(setAuth(false))
+      }
+    })
+    .then(() => dispatch(checkingUser(localStorage.getItem('authId'))))
 }
 
 export const setMessage = message => dispatch => {
   dispatch(setMessageAC(message))
   dispatch(setAuth(false))
+}
+
+export const setStatus = (status, id) => dispatch => {
+  profileAPI.setStatusAPI(status, id).then(() => {
+    dispatch(setStatusAC(status))
+  })
 }

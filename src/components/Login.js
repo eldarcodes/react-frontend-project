@@ -16,9 +16,6 @@ function Login(props) {
 
   const onSubmit = values => {
     props.auth(values)
-    setTimeout(() => {
-      props.checkingUser(localStorage.getItem('authId'))
-    }, 30)
   }
 
   return (
@@ -83,8 +80,10 @@ const LoginForm = props => {
 
         {props.message && (
           <div
-            class={`mt-3 alert alert-${
-              props.message === 'Вы успешно вошли' ? 'success' : 'danger'
+            className={`mt-3 alert alert-${
+              props.message === 'Вы успешно зарегистрировались'
+                ? 'success'
+                : 'danger'
             }`}
             role="alert"
           >

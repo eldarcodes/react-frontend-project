@@ -19,21 +19,30 @@ function NavBar({isAuth, id, userInfo, checkingUser, setMessage}) {
           <div className="d-flex flex-column flex-md-row align-items-center ">
             <NavLink
               className="my-0 mr-md-auto font-weight-normal text-decoration-none"
-              to="/"
+              to={`${isAuth ? '/profile' : '/'}`}
               exact
               style={{fontSize: 20}}
             >
               {isAuth ? `${userInfo.name} ${userInfo.surname}` : 'MyWebSite'}
             </NavLink>
             {isAuth ? (
-              <NavLink
-                activeClassName=""
-                to="/login"
-                onClick={logout}
-                className="btn btn-outline-primary"
-              >
-                Выйти
-              </NavLink>
+              <div>
+                <NavLink
+                  activeClassName=""
+                  to="/"
+                  className="btn btn-outline-primary mr-2"
+                >
+                  Посты
+                </NavLink>
+                <NavLink
+                  activeClassName=""
+                  to="/login"
+                  onClick={logout}
+                  className="btn btn-outline-primary"
+                >
+                  Выйти
+                </NavLink>
+              </div>
             ) : (
               <div>
                 <NavLink

@@ -10,7 +10,9 @@ export const renderField = ({
     <label>{label}</label>
     <div>
       <input
-        className={`form-control ${touched && error ? 'is-invalid' : ''}`}
+        className={`${type !== 'radio' && 'form-control'} ${
+          touched && error ? 'is-invalid' : ''
+        }`}
         {...input}
         placeholder={label}
         type={type}

@@ -11,13 +11,14 @@ export const postsAPI = {
 }
 
 export const profileAPI = {
-  registration(name, surname, login, email, password) {
+  registration(name, surname, login, email, password, gender) {
     return instance.post(`/registration`, {
       name,
       surname,
       login,
       email,
-      password
+      password,
+      gender
     })
   },
   authMe(login, password) {
@@ -29,6 +30,12 @@ export const profileAPI = {
   isUserAuth(userId) {
     return instance.post(`/checking`, {
       id: userId
+    })
+  },
+  setStatusAPI(status, id) {
+    return instance.post(`/changeProfile`, {
+      id,
+      status
     })
   }
 }

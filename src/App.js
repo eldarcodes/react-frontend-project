@@ -4,6 +4,7 @@ import PostsContainer from './components/Posts/PostsContainer'
 import {Route} from 'react-router-dom'
 import Registration from './components/Registration'
 import Login from './components/Login'
+import Profile from './components/Profile/Profile'
 
 function App() {
   return (
@@ -17,6 +18,9 @@ function App() {
       </Route>
       <Route path="/login">
         <Login />
+      </Route>
+      <Route path="/profile">
+        <Profile />
       </Route>
     </>
   )

@@ -70,6 +70,33 @@ const RegistrationForm = props => {
           label="Введите логин"
         />
       </div>
+      <div className="form-group d-flex">
+        <label className="mr-3">Ваш пол</label>
+        <div>
+          <div>
+            <label>
+              <Field
+                type="radio"
+                component="input"
+                value="Мужской"
+                name="sex"
+              />
+              <p className="d-inline-block m-0 ml-2">Мужской</p>
+            </label>
+          </div>
+          <div>
+            <label>
+              <Field
+                type="radio"
+                component="input"
+                value="Женский"
+                name="sex"
+              />
+              <p className="d-inline-block m-0 ml-2">Женский</p>
+            </label>
+          </div>
+        </div>
+      </div>
       <div className="form-group">
         <Field
           component={renderField}
@@ -112,7 +139,7 @@ const RegistrationForm = props => {
         </button>
         {props.message && (
           <div
-            class={`mt-3 alert alert-${
+            className={`mt-3 alert alert-${
               props.message === 'Вы успешно зарегистрировались'
                 ? 'success'
                 : 'danger'
