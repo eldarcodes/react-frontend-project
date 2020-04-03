@@ -17,12 +17,10 @@ export function postsReducer(state = initialState, action) {
 
 export const setPosts = posts => ({type: SET_POSTS, posts})
 
-export const getPosts = () => {
-  return dispatch => {
-    postsAPI.getPosts().then(({data}) => {
-      if (typeof data !== 'string') {
-        dispatch(setPosts(data))
-      }
-    })
-  }
+export const getPosts = () => dispatch => {
+  postsAPI.getPosts().then(({data}) => {
+    if (typeof data !== 'string') {
+      dispatch(setPosts(data))
+    }
+  })
 }

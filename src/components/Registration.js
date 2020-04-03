@@ -11,8 +11,8 @@ function Registration(props) {
   }, [])
 
   if (
-    props.message === 'Вы успешно зарегистрировались' ||
-    props.message === 'Вы успешно вошли'
+    props.message === 'Вы успешно вошли' ||
+    props.message === 'Вы успешно зарегистрировались'
   ) {
     return <Redirect to="/login" />
   }
@@ -40,6 +40,7 @@ function Registration(props) {
 
 const RegistrationForm = props => {
   const {pristine, reset, submitting} = props
+
   return (
     <form method="POST" onSubmit={props.handleSubmit}>
       <div className="form-group row">
@@ -73,27 +74,33 @@ const RegistrationForm = props => {
       <div className="form-group d-flex">
         <label className="mr-3">Ваш пол</label>
         <div>
-          <div>
-            <label>
-              <Field
-                type="radio"
-                component="input"
-                value="Мужской"
-                name="sex"
-              />
-              <p className="d-inline-block m-0 ml-2">Мужской</p>
+          <div className="custom-control custom-radio">
+            <Field
+              type="radio"
+              id="customRadio1"
+              className="custom-control-input"
+              component="input"
+              value="Мужской"
+              name="sex"
+            />
+            <label className="custom-control-label" htmlFor="customRadio1">
+              Мужской
             </label>
           </div>
           <div>
-            <label>
+            <div className="custom-control custom-radio">
               <Field
                 type="radio"
+                id="customRadio2"
+                className="custom-control-input"
                 component="input"
                 value="Женский"
                 name="sex"
               />
-              <p className="d-inline-block m-0 ml-2">Женский</p>
-            </label>
+              <label className="custom-control-label" htmlFor="customRadio2">
+                Женский
+              </label>
+            </div>
           </div>
         </div>
       </div>
@@ -123,16 +130,28 @@ const RegistrationForm = props => {
           type="password"
           label="Подтвердите пароль"
         />
+        {props.isFetching ? (
+          <button className="btn btn-primary mt-3" type="button" disabled>
+            <span
+              className="spinner-border spinner-border-sm mr-2"
+              role="status"
+              aria-hidden="true"
+            ></span>
+            Загрузка...
+          </button>
+        ) : (
+          <button
+            disabled={pristine || submitting}
+            className="text-center btn-primary mt-3 btn text-white"
+            type="submit"
+          >
+            Зарегистрироваться
+          </button>
+        )}
+
         <button
           disabled={pristine || submitting}
-          className="text-center btn-primary mt-3 btn text-white reg-button"
-          type="submit"
-        >
-          Зарегистрироваться
-        </button>
-        <button
-          disabled={pristine || submitting}
-          className="text-center btn-outline-primary mt-3 btn reg-button ml-3"
+          className="text-center btn-outline-primary mt-3 btn ml-3"
           onClick={reset}
         >
           Очистить поля
@@ -162,7 +181,8 @@ const RegistrationReduxForm = reduxForm({
 
 const mapStateToProps = state => {
   return {
-    message: state.authPage.message
+    message: state.authPage.message,
+    isFetching: state.authPage.isFetching
   }
 }
 

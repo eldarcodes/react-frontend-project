@@ -2,13 +2,16 @@ import React, {useState, useEffect} from 'react'
 import {NavLink, Redirect} from 'react-router-dom'
 import {reduxForm, Field} from 'redux-form'
 import {connect} from 'react-redux'
-import {auth, checkingUser} from './../redux/Auth/authReducer'
+import {auth, setMessageAC} from './../redux/Auth/authReducer'
+import {checkingUser} from '../redux/Profile/profileReducer'
 import {validate, renderField} from './common/validate'
 
 function Login(props) {
   useEffect(() => {
     document.title = 'Вход'
   }, [])
+
+  props.setMessageAC('')
 
   if (props.message === 'Вы успешно вошли') {
     return <Redirect to="/" />
@@ -90,13 +93,24 @@ const LoginForm = props => {
             {props.message}
           </div>
         )}
-        <button
-          disabled={pristine || submitting}
-          type="submit"
-          className="btn btn-primary btn-block pt-2 pb-2"
-        >
-          Войти
-        </button>
+        {!props.isFetching ? (
+          <button
+            disabled={pristine || submitting}
+            type="submit"
+            className="btn btn-primary btn-block pt-2 pb-2"
+          >
+            Войти
+          </button>
+        ) : (
+          <button class="btn btn-primary btn-block" type="button" disabled>
+            <span
+              class="spinner-border spinner-border-sm mr-2"
+              role="status"
+              aria-hidden="true"
+            ></span>
+            Загрузка...
+          </button>
+        )}
       </div>
       <div className="registration shadow bg-white rounded text-dark d-flex justify-content-center mt-4 p-3">
         <p className="m-0">Нет аккаунта?</p>
@@ -118,8 +132,12 @@ const mapStateToProps = state => {
     isAuth: state.authPage.isAuth,
     id: state.authPage.id,
     role: state.authPage.role,
-    message: state.authPage.message
+    message: state.authPage.message,
+    isFetching: state.authPage.isFetching,
+    registered: state.authPage.registered
   }
 }
 
-export default connect(mapStateToProps, {auth, checkingUser})(Login)
+export default connect(mapStateToProps, {auth, checkingUser, setMessageAC})(
+  Login
+)

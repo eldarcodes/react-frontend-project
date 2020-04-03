@@ -1,13 +1,10 @@
-import React, {useEffect} from 'react'
+import React from 'react'
 import {NavLink} from 'react-router-dom'
 import {connect} from 'react-redux'
-import {checkingUser, setMessage} from './../redux/Auth/authReducer'
+import {checkingUser} from '../redux/Profile/profileReducer'
+import {setMessage} from './../redux/Auth/authReducer'
 
 function NavBar({isAuth, id, userInfo, checkingUser, setMessage}) {
-  useEffect(() => {
-    checkingUser(localStorage.getItem('authId'))
-  }, [checkingUser])
-
   const logout = () => {
     localStorage.removeItem('authId')
     setMessage('')
@@ -70,8 +67,8 @@ function NavBar({isAuth, id, userInfo, checkingUser, setMessage}) {
 const mapStateToProps = state => {
   return {
     isAuth: state.authPage.isAuth,
-    id: state.authPage.id,
-    userInfo: state.authPage.userInfo
+    id: state.profilePage.id,
+    userInfo: state.profilePage.userInfo
   }
 }
 

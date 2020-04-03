@@ -24,6 +24,44 @@ export const renderField = ({
   </div>
 )
 
+export const renderEditProfile = ({
+  input,
+  label,
+  type,
+  meta: {touched, error, warning}
+}) => {
+  return (
+    <div>
+      <input
+        className={`form-control ${touched && error ? 'is-invalid' : ''}`}
+        {...input}
+        placeholder={label}
+        type={type}
+      />
+      {touched &&
+        ((error && <span className="invalid-feedback">{error}</span>) ||
+          (warning && <span className="invalid-feedback">{warning}</span>))}
+    </div>
+  )
+}
+
+export const SelectField = ({
+  input,
+  label,
+  meta: {touched, error},
+  children
+}) => (
+  <div>
+    <select
+      className={`custom-select ${touched && error ? 'is-invalid' : ''}`}
+      {...input}
+    >
+      {children}
+    </select>
+    {touched && error && <span className="invalid-feedback">{error}</span>}
+  </div>
+)
+
 export const warn = values => {
   const warnings = {}
   //   if (values.login < 19) {
@@ -89,6 +127,19 @@ export const validate = values => {
   ) {
     errors.password = 'Пароли не совпадают'
     errors.confirm_password = 'Пароли не совпадают'
+  }
+
+  //selects
+  // if (!values.day || !values.month || !values.year) {
+  //   values.day = '1'
+  //   values.month = 'Январь'
+  //   values.year = '2020'
+  // }
+  if (/[0-9]/.test(values.user_name)) {
+    errors.user_name = 'Поле не должно содержать цифр'
+  }
+  if (/[0-9]/.test(values.user_surname)) {
+    errors.user_surname = 'Поле не должно содержать цифр'
   }
 
   return errors

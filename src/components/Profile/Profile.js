@@ -1,71 +1,64 @@
-import React, {useState} from 'react'
+import React from 'react'
 import {connect} from 'react-redux'
-import {checkingUser, setStatus} from './../../redux/Auth/authReducer'
+import {checkingUser, setStatus} from './../../redux/Profile/profileReducer'
+import {NavLink, Route} from 'react-router-dom'
+import ProfileHead from './ProfileHead'
+import {ProfileEditReduxForm} from './ProfileEdit'
 
 function Profile(props) {
-  const [isEditing, setIsEditing] = useState(false)
-  const [inputValue, setInputValue] = useState('')
-
-  const sendStatus = () => {
-    setIsEditing(false)
-    props.setStatus(inputValue, localStorage.getItem('authId'))
+  const onSubmit = values => {
+    console.log(values)
   }
-
-  const inputHandler = e => {
-    setInputValue(e.target.value)
-  }
-
   return (
     <div className="container">
       <div className="row">
         <div className="col-4">
           <div className="card">
-            <img
-              src={props.userInfo.avatar}
-              className="card-img-top"
-              alt={props.userInfo.name}
-            />
+            <Route exact path="/profile">
+              <img
+                src={props.userInfo.avatar}
+                className="card-img-top"
+                alt={props.userInfo.name}
+              />
+            </Route>
+            <Route path="/profile/edit">
+              <img
+                src={`../${props.userInfo.avatar}`}
+                className="card-img-top"
+                alt={props.userInfo.name}
+              />
+            </Route>
             <div className="card-body">
-              <button className="btn btn-secondary btn-block">
-                Редактировать
-              </button>
+              <Route path="/profile/edit">
+                <NavLink
+                  to="/profile/edit"
+                  className="btn btn-secondary btn-block"
+                >
+                  Изменить аватар
+                </NavLink>
+              </Route>
+              <Route exact path="/profile">
+                <NavLink
+                  to="/profile/edit"
+                  className="btn btn-secondary btn-block"
+                >
+                  Редактировать профиль
+                </NavLink>
+              </Route>
             </div>
           </div>
         </div>
         <div className="col-8 shadow-sm p-3 bg-white rounded">
-          <h2>
-            {props.userInfo.name} {props.userInfo.surname}
-          </h2>
-          <div
-            onClick={() => {
-              setIsEditing(true)
-              setInputValue(props.userInfo.status)
-            }}
-            style={{cursor: 'pointer'}}
-            className="text-secondary"
-          >
-            {isEditing ? (
-              <input
-                value={inputValue}
-                onChange={inputHandler}
-                autoFocus
-                onBlur={sendStatus}
-                placeholder="Введите статус"
-                className="form-control"
-              />
-            ) : (
-              <p>
-                {props.userInfo.status
-                  ? `${props.userInfo.status}`
-                  : 'Изменить статус'}
-              </p>
-            )}
-          </div>
-          <hr />
-          <div>
-            <p>Ваш пол: {props.userInfo.gender}</p>
-            <p>Дата регистрации: {props.userInfo.date_registration}</p>
-          </div>
+          <ProfileHead {...props} />
+          <Route path="/profile" exact>
+            <div>
+              <p>Ваш пол: {props.userInfo.gender}</p>
+              <p>Дата регистрации: {props.userInfo.date_registration}</p>
+            </div>
+          </Route>
+          <Route path="/profile/edit">
+            <ProfileEditReduxForm {...props} onSubmit={onSubmit} />
+          </Route>
         </div>
       </div>
     </div>
@@ -75,7 +68,8 @@ function Profile(props) {
 const mapStateToProps = state => {
   return {
     isAuth: state.authPage.isAuth,
-    userInfo: state.authPage.userInfo
+    userInfo: state.profilePage.userInfo,
+    id: state.profilePage.id
   }
 }
 

@@ -3,23 +3,17 @@ import {
   SET_AUTH,
   SET_USER_DATA,
   SET_MESSAGE,
-  SET_USER_INFO,
-  SET_STATUS
+  SET_LOGIN_LOADER,
+  SET_REGISTERED
 } from '../types.js'
+import {checkingUser} from '../Profile/profileReducer'
 
 const initialState = {
   isAuth: false,
-  id: null,
   role: '',
   message: '',
-  userInfo: {
-    name: '',
-    surname: '',
-    gender: '',
-    email: '',
-    date_registration: null,
-    status: ''
-  }
+  isFetching: false,
+  registered: false
 }
 
 export function authReducer(state = initialState, action) {
@@ -27,42 +21,30 @@ export function authReducer(state = initialState, action) {
     case SET_AUTH: {
       return {...state, isAuth: action.auth}
     }
-    case SET_USER_DATA: {
-      return {
-        ...state,
-        id: action.data.id,
-        role: action.data.role,
-        message: action.data.message,
-        isAuth: true
-      }
-    }
-    case SET_USER_INFO: {
-      return {
-        ...state,
-        userInfo: {
-          name: action.data.info.name,
-          surname: action.data.info.surname,
-          gender: action.data.info.gender,
-          email: action.data.info.email,
-          date_registration: action.data.info.date_registration,
-          avatar: action.data.info.avatar,
-          status: action.data.info.status
-        }
-      }
-    }
     case SET_MESSAGE: {
       return {
         ...state,
         message: action.message
       }
     }
-    case SET_STATUS: {
+    case SET_USER_DATA: {
       return {
         ...state,
-        userInfo: {
-          ...state.userInfo,
-          status: action.status
-        }
+        role: action.data.role,
+        message: action.data.message,
+        isAuth: true
+      }
+    }
+    case SET_LOGIN_LOADER: {
+      return {
+        ...state,
+        isFetching: action.isFetching
+      }
+    }
+    case SET_REGISTERED: {
+      return {
+        ...state,
+        registered: action.registered
       }
     }
     default:
@@ -71,26 +53,34 @@ export function authReducer(state = initialState, action) {
 }
 
 export const setAuth = auth => ({type: SET_AUTH, auth})
+
 export const setUserData = data => ({
   type: SET_USER_DATA,
   data
 })
-export const setUserInfo = data => ({
-  type: SET_USER_INFO,
-  data
+export const setLoader = isFetching => ({
+  type: SET_LOGIN_LOADER,
+  isFetching
 })
+
 export const setMessageAC = message => ({
   type: SET_MESSAGE,
   message
 })
 
-export const setStatusAC = status => ({
-  type: SET_STATUS,
-  status
+export const setRegistered = registered => ({
+  type: SET_REGISTERED,
+  registered
 })
 
+export const setMessage = message => dispatch => {
+  dispatch(setMessageAC(message))
+  dispatch(setAuth(false))
+}
+
 export const register = values => dispatch => {
-  profileAPI
+  dispatch(setLoader(true))
+  return profileAPI
     .registration(
       values.name,
       values.surname,
@@ -101,24 +91,21 @@ export const register = values => dispatch => {
     )
     .then(({data}) => {
       dispatch(setMessageAC(data.message))
+
+      dispatch(setLoader(false))
+      if (data.message === 'Вы успешно зарегистрировались') {
+        dispatch(setRegistered(true))
+      }
     })
 }
 
-export const checkingUser = userId => dispatch => {
-  profileAPI.isUserAuth(userId).then(({data}) => {
-    if (data.message) {
-      dispatch(setAuth(true))
-      dispatch(setUserInfo(data))
-      dispatch(setMessageAC(data.message))
-    }
-  })
-}
-
 export const auth = values => dispatch => {
+  dispatch(setLoader(true))
   profileAPI
     .authMe(values.login, values.password)
     .then(({data}) => {
       dispatch(setUserData(data))
+      dispatch(setLoader(false))
       if (data.id !== null) {
         dispatch(setAuth(true))
         localStorage.setItem('authId', data.id)
@@ -127,15 +114,4 @@ export const auth = values => dispatch => {
       }
     })
     .then(() => dispatch(checkingUser(localStorage.getItem('authId'))))
-}
-
-export const setMessage = message => dispatch => {
-  dispatch(setMessageAC(message))
-  dispatch(setAuth(false))
-}
-
-export const setStatus = (status, id) => dispatch => {
-  profileAPI.setStatusAPI(status, id).then(() => {
-    dispatch(setStatusAC(status))
-  })
 }

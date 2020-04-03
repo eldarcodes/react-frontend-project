@@ -6,7 +6,7 @@ const instance = axios.create({
 
 export const postsAPI = {
   getPosts() {
-    return instance.get(`/main/`)
+    return instance.get(`/main`)
   }
 }
 
@@ -36,6 +36,12 @@ export const profileAPI = {
     return instance.post(`/changeProfile`, {
       id,
       status
+    })
+  },
+  editProfile(data, id) {
+    return instance.post('/changeProfile', {
+      id,
+      data
     })
   }
 }
